@@ -58,7 +58,7 @@ module Svn2Git
       if File.exists?(File.expand_path(DEFAULT_AUTHORS_FILE))
         options[:authors] = DEFAULT_AUTHORS_FILE
       end
-
+      options[:authorsprog] = nil
 
       # Parse the command-line arguments.
       @opts = OptionParser.new do |opts|
@@ -126,6 +126,10 @@ module Svn2Git
           options[:authors] = authors
         end
 
+        opts.on('--authors-prog AUTHORS_PROG', "If this option is specified, for each SVN committer name that does not exist in the authors file, the given file is executed with the committer name as the first argument. The program is expected to return a single line of the form \"Name <email>\", which will be treated as if included in the authors file.") do |authorsprog|
+            options[:authorsprog] = authorsprog
+        end
+
         opts.on('--exclude REGEX', 'Specify a Perl regular expression to filter paths when fetching; can be used multiple times') do |regex|
           options[:exclude] << regex
         end
@@ -174,6 +178,7 @@ module Svn2Git
       nominimizeurl = @options[:nominimizeurl]
       rootistrunk = @options[:rootistrunk]
       authors = @options[:authors]
+      authors = @options[:authorsprog]
       exclude = @options[:exclude]
       revision = @options[:revision]
       username = @options[:username]
@@ -211,6 +216,7 @@ module Svn2Git
       end
 
       run_command("#{git_config_command} svn.authorsfile #{authors}") unless authors.nil?
+      run_command("#{git_config_command} svn.authorsprog #{authorsprog}") unless authorsprog.nil?
 
       cmd = "git svn fetch "
       unless revision.nil?
