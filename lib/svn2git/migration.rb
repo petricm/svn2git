@@ -178,7 +178,7 @@ module Svn2Git
       nominimizeurl = @options[:nominimizeurl]
       rootistrunk = @options[:rootistrunk]
       authors = @options[:authors]
-      authors = @options[:authorsprog]
+      authorsprog = @options[:authorsprog]
       exclude = @options[:exclude]
       revision = @options[:revision]
       username = @options[:username]
